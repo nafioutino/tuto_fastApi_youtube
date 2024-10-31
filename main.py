@@ -164,3 +164,23 @@ def search_pokemons(
 
     raise HTTPException(
         status_code=404, detail="Aucun Pokemon ne répond aux critères de recherche")
+
+
+# =====Tous les Pokémons avec la pagination=====
+@app.get("/pokemons2/")
+def get_all_pokemons(page: int = 1, items: int = 10) -> list[Pokemon]:
+
+    items = min(items, 20)
+    max_page = math.ceil(len(list_pokemons) / items)
+    current_page = min(page, max_page)
+    start = (current_page-1)*items
+    stop = start + items if start + \
+        items <= len(list_pokemons) else len(list_pokemons)
+    sublist = (list(list_pokemons))[start:stop]
+
+    res = []
+
+    for id in sublist:
+        res.append(Pokemon(**list_pokemons[id]))
+
+    return res
